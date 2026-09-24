@@ -1,0 +1,23 @@
+[project]
+name = "adbuy-extract"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "HS", email = "H@AwakeQubit.com" }
+]
+requires-python = ">=3.9"
+dependencies = [
+    "editdistance>=0.8.1",
+    "openai>=2.48.0",
+    "pandas>=2.3.3",
+    "pydantic>=2.13.5",
+    "python-dotenv>=1.2.1",
+]
+
+[project.scripts]
+adbuy-extract = "adbuy_extract:main"
+
+[build-system]
+requires = ["uv_build>=0.12.15,<0.13.0"]
+build-backend = "uv_build"
