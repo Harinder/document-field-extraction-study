@@ -1,0 +1,11 @@
+# qwen3:14b with a context large enough for this corpus.
+#
+# Ollama defaults to num_ctx 4096 regardless of what the model supports
+# (qwen3:14b supports 40960). At 4096, 69 of 641 VRDU ad-buy documents
+# (10.8%) would be silently truncated: no error, no warning, just missing
+# text and unexplained failures on the longest documents.
+#
+# 32768 covers the longest document in the corpus (~18,237 tokens) plus
+# prompt and schema overhead, with headroom.
+FROM qwen3:14b
+PARAMETER num_ctx 32768

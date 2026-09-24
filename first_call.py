@@ -63,6 +63,14 @@ for d in docs:
         messages=[{"role": "system", "content": PROMPT},
                   {"role": "user", "content": d["ocr"]["text"]}],
         response_format=AdBuy,
+        # temperature 0 reduces (does not eliminate) run-to-run variance.
+        # qwen3 defaults to 0.6, which made the same prompt give three
+        # different contract_num answers across two runs. See FINDINGS 7.
+        temperature=0,
+        # NOTE: think=False is NOT honoured on Ollama's /v1 endpoint, and
+        # /no_think in the prompt does not work either. Thinking is baked
+        # into the chat template. Costs ~3k output tokens per document in
+        # wall-clock, not money. Open item; also a week 7 ablation arm.
     )
     pred = r.choices[0].message.parsed.model_dump()
     # Unrepeated fields have a string key. Line-item rows have a LIST key

@@ -1,0 +1,22 @@
+==============================================================================
+00a83bbc-0101-f092-4bd7-e75f315e8f14.pdf
+   FIELD           PREDICTED                    GOLD
+OK advertiser      'Michael Bloomberg 2020, Inc' ['Michael Bloomberg 2020, Inc']
+OK product         'MIKE BLOOMBERG 2020 INC'    ['MIKE BLOOMBERG 2020 INC']
+OK property        'KMSP'                       ['KMSP']
+XX contract_num    '0129'                       ['950658']
+OK flight_from     '12/30/19'                   ['12/30/19']
+OK gross_amount    '$5,625.00'                  ['$5,625.00']
+==============================================================================
+00c29ad8-c88b-b3bb-1a39-3267e47c7a88.pdf
+   FIELD           PREDICTED                    GOLD
+OK advertiser      'POL/FWD.US PAC'             ['POL/FWD.US PAC']
+XX product         'FOX'                        ['issue']
+OK property        'WXXA'                       ['WXXA']
+XX contract_num    '2436316-1'                  ['2436316']
+XX flight_from     '03/27/20 - 03/31/20'        ['03/27/20']
+OK gross_amount    '$290.00'                    ['$290.00']
+========================================================================
+tokens: 2869 in / 6016 out across 2 docs
+model returned: qwen3-14b-32k
+matched 8/12 fields (informal, real scoring comes from the evaluator)
