@@ -41,6 +41,9 @@ if not API_KEY:
 
 class AdBuy(BaseModel):
     advertiser: Optional[str]
+    agency: Optional[str]
+    flight_to: Optional[str]
+    tv_address: Optional[str]
     product: Optional[str]
     property: Optional[str]      # the station call sign
     contract_num: Optional[str]

@@ -1,0 +1,28 @@
+==============================================================================
+00a83bbc-0101-f092-4bd7-e75f315e8f14.pdf
+   FIELD           PREDICTED                    GOLD
+OK advertiser      'Michael Bloomberg 2020, Inc' ['Michael Bloomberg 2020, Inc']
+OK agency          None                         None
+XX flight_to       None                         ['03/29/20']
+XX tv_address      None                         ['4614 Collection Center Drive\nChicago, IL 60693']
+OK product         'MIKE BLOOMBERG 2020 INC'    ['MIKE BLOOMBERG 2020 INC']
+OK property        'KMSP'                       ['KMSP']
+XX contract_num    None                         ['950658']
+XX flight_from     None                         ['12/30/19']
+OK gross_amount    '$5,625.00'                  ['$5,625.00']
+==============================================================================
+00c29ad8-c88b-b3bb-1a39-3267e47c7a88.pdf
+   FIELD           PREDICTED                    GOLD
+OK advertiser      'POL/FWD.US PAC'             ['POL/FWD.US PAC']
+OK agency          None                         None
+OK flight_to       '03/31/20'                   ['03/31/20']
+XX tv_address      'WXXA'                       ['PO Box 743299\nAtlanta, GA 30384']
+XX product         'FOX'                        ['issue']
+OK property        'WXXA'                       ['WXXA']
+XX contract_num    '2436316-1'                  ['2436316']
+OK flight_from     '03/27/20'                   ['03/27/20']
+OK gross_amount    '$290.00'                    ['$290.00']
+========================================================================
+tokens: 2869 in / 4456 out across 2 docs
+model returned: qwen3-14b-32k
+matched 11/18 fields (informal, real scoring comes from the evaluator)

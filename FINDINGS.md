@@ -69,3 +69,29 @@ all three would have silently corrupted results.
     baked into the chat template. Roughly 3k output tokens per document, so
     about 10x wall-clock. Free locally, but it makes full sweeps slow.
     Open item.
+
+## 2026-09-23, schema expanded from 6 to 9 unrepeated fields
+
+11. TEMPERATURE 0 GIVES STABLE ANSWERS. Two consecutive runs produced
+    byte-identical field predictions. Output token counts differed (3607 vs
+    4456), so the hidden reasoning varied while the final structured answer
+    converged. Consequence: at temperature 0 a difference between runs now
+    carries information. At 0.6 it did not.
+
+12. SCHEMA BREADTH DEGRADES PER-FIELD ACCURACY, measured on my own data.
+    Expanding the same call from 6 fields to 9 caused four fields on
+    document 1 to return None, including flight_from which was previously
+    extracted correctly ('12/30/19'). Nothing else changed. This matches
+    published results where accuracy collapses as schema size grows.
+    Experiment this motivates: does splitting into two calls of 4 and 5
+    fields beat one call of 9? Week 7 ablation arm.
+
+13. Correct absence detection works. agency returned None against gold None
+    on both documents. The prompt instruction to return null rather than
+    infer is being followed at least some of the time.
+
+14. tv_address on document 2 returned 'WXXA', the station call sign, where
+    gold is a PO Box in Atlanta. Same shape as the product confusion in
+    finding 2: the model finds a plausible nearby value and assigns it to
+    the wrong field. Now two instances, so worth counting as a category
+    rather than treating as a one-off.
