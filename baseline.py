@@ -8,10 +8,9 @@ Usage:
   uv run python baseline.py DeepForm-kno_template-train_200-test_141-valid_100-SD_0
   uv run python baseline.py <split> --limit 10        # smoke test first
 """
-import gzip, json, os, sys, time
+import gzip, json, os, sys, time, urllib.request
 from typing import Optional
 from dotenv import load_dotenv
-from openai import OpenAI
 from pydantic import BaseModel
 
 load_dotenv()
@@ -60,23 +59,58 @@ with gzip.open("data/adbuy.jsonl.gz", "rt") as f:
 print(f"matched {len(docs)} documents in the corpus")
 
 targets = sorted(docs)[:LIMIT] if LIMIT else sorted(docs)
-client = OpenAI(base_url=BASE_URL, api_key=API_KEY)
 PROMPT = open("prompts/v1.txt").read()
 
-results, t0, n_cached = {}, time.time(), 0
+# Ollama's NATIVE /api/chat, not the OpenAI-compatible /v1 path.
+# Reason: think=false is ignored on /v1, so qwen3 generates ~3000 tokens of
+# hidden reasoning per document at ~21 tok/s, about 2.4 minutes each. On the
+# native endpoint the same extraction is ~23 tokens in under a second.
+# Structured output still works, via `format` with a JSON schema.
+NATIVE_URL = BASE_URL.replace("/v1", "") + "/api/chat"
+# Do NOT hand Pydantic's model_json_schema() straight to Ollama. It emits
+# {"anyOf":[{"type":"string"},{"type":"null"}]} per field, which compiles to a
+# grammar that made generation run away (1787+ tokens and climbing, timing out
+# at 300s). The equivalent {"type":["string","null"]} form completes in ~14s.
+# Same JSON Schema semantics, very different constrained-decoding behaviour.
+FIELDS = list(AdBuy.model_fields)
+SCHEMA = {"type": "object",
+          "properties": {f: {"type": ["string", "null"]} for f in FIELDS},
+          "required": FIELDS}
+
+def extract(text):
+    body = json.dumps({
+        "model": MODEL, "stream": False, "think": False,
+        "format": SCHEMA, "options": {"temperature": 0},
+        "messages": [{"role": "system", "content": PROMPT},
+                     {"role": "user", "content": text}],
+    }).encode()
+    req = urllib.request.Request(NATIVE_URL, data=body,
+                                 headers={"Content-Type": "application/json"})
+    resp = json.loads(urllib.request.urlopen(req, timeout=240).read(), strict=False)
+    return json.loads(resp["message"]["content"], strict=False), resp.get("eval_count", 0)
+
+results, t0, n_cached, failed = {}, time.time(), 0, []
 for i, fn in enumerate(targets, 1):
     cache = os.path.join(CACHE_DIR, fn.replace("/", "_") + ".json")
     if os.path.exists(cache):
         pred = json.load(open(cache)); n_cached += 1
     else:
-        r = client.chat.completions.parse(
-            model=MODEL,
-            messages=[{"role": "system", "content": PROMPT},
-                      {"role": "user", "content": docs[fn]["ocr"]["text"]}],
-            response_format=AdBuy,
-            temperature=0,
-        )
-        pred = r.choices[0].message.parsed.model_dump()
+        # Generation time varies from ~15s to several minutes, unpredictably.
+        # One retry, then record the document as failed and move on rather than
+        # letting a single pathological case block the whole sweep. Failures are
+        # counted and reported: a silently skipped document is a lying score.
+        pred = None
+        for attempt in (1, 2):
+            try:
+                pred, n_tok = extract(docs[fn]["ocr"]["text"])
+                break
+            except Exception as e:
+                if attempt == 2:
+                    failed.append((fn, type(e).__name__))
+                    print("    FAILED %s (%s)" % (fn[:20], type(e).__name__), flush=True)
+        if pred is None:
+            continue
+        pred = {k: pred.get(k) for k in AdBuy.model_fields}   # normalise keys
         json.dump(pred, open(cache, "w"))
     # Google's format: list of [entity_name, extracted_entity] where
     # extracted_entity[0] is the text. Nulls are omitted, not sent as empty.
@@ -88,5 +122,10 @@ for i, fn in enumerate(targets, 1):
 out = f"predictions/{SPLIT}-test_predictions.json"
 json.dump({"meta": {"model": MODEL, "prompt": "v1"}, "results": results}, open(out, "w"))
 print(f"\nwrote {out} ({len(results)} documents)")
+if failed:
+    print(f"WARNING: {len(failed)} documents failed and are absent from predictions:")
+    for fn, err in failed: print(f"  {fn} ({err})")
+    print("These count as complete misses in the score. Do not report the")
+    print("number without stating this.")
 print(f"score it:\n  PYTHONPATH=vendor uv run python -m vrdu.evaluate \\\n"
       f"    -b data/vrdu -e predictions -o eval_results.tsv")

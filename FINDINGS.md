@@ -95,3 +95,36 @@ all three would have silently corrupted results.
     finding 2: the model finds a plausible nearby value and assigns it to
     the wrong field. Now two instances, so worth counting as a category
     rather than treating as a one-off.
+
+## 2026-09-23, step 3 harness: infrastructure debugging
+
+15. THINKING MODE WAS THE FIRST BOTTLENECK. Ollama's OpenAI-compatible /v1
+    endpoint silently ignores think=false, so qwen3 generated roughly 3000
+    tokens of hidden reasoning per document. Measured from ollama's own log:
+    prompt eval 301 to 600 tok/s (fine), generation 21 tok/s (the bottleneck).
+    About 2.4 minutes per document, 5.6 hours for a 141-document split. The
+    native /api/chat endpoint does honour think=false, and structured output
+    still works there via `format` with a JSON schema. Switched to it.
+
+16. UNBOUNDED STRINGS UNDER GRAMMAR CONSTRAINT CAN RUN AWAY. With thinking
+    disabled, generation still climbed past 1787 tokens and kept going for a
+    1281-token document. A schema saying {"type":["string","null"]} places no
+    length bound, so echoing the entire source document into one field is
+    perfectly valid output. Constrained decoding guarantees the output is
+    VALID, not that it is SENSIBLE, and an unconstrained model would simply
+    have stopped talking. This is a failure mode that strict schema modes
+    introduce rather than prevent.
+
+17. GENERATION TIME IS HIGHLY VARIABLE AND I CANNOT FULLY EXPLAIN IT. The same
+    document, same schema, same prompt ranged from 14s to over 300s across
+    runs. Schema form (anyOf vs type-array) did not explain it. Documented as
+    open rather than claimed as solved. Mitigation: 240s timeout, one retry,
+    then record the document as failed and continue. Failures are counted and
+    printed loudly, because a silently skipped document makes the score a lie.
+
+18. PROCESS FAILURE, MINE. I changed more than one variable between diagnostic
+    runs repeatedly: the schema-form test also swapped the system prompt, the
+    isolation test dropped it entirely. Each run answered a question I had not
+    meant to ask, and four rounds did the work of two. This is exactly the
+    discipline week 7's ablation requires (one factor, hypothesis written
+    first) and I demonstrated why by not following it.
