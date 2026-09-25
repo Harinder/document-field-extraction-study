@@ -143,3 +143,41 @@ all three would have silently corrupted results.
     domain. An advertiser name is short, a flight date is eight characters.
     The schema was previously asserting that any of these could be a
     paragraph, which was never true.
+
+## 2026-09-24, FIRST EXTERNALLY SCORED BASELINE
+
+Conditions: qwen3-14b-32k local, prompt v1, temperature 0, think=false,
+maxLength 120, 9 unrepeated fields only, split
+DeepForm-kno_template-train_200-test_141-valid_100-SD_0 (141 test documents),
+0 failures, 32 minutes wall clock. Scored by Google's evaluate.py against
+Google's annotations.
+
+  unrepeated F1  0.665   (P 0.622  R 0.714)   <- the honest headline
+  macro F1       0.591
+  micro F1       0.359   (R 0.252)
+
+20. REPORT THE UNREPEATED AGGREGATE, NOT MICRO OR MACRO. evaluate.py scores
+    all 14 fields; I extract 9. The 5 line-item fields score 0. Micro is
+    instance-weighted and line-item instances dominate the corpus, so micro
+    collapses to 0.359. Macro averages 9 real scores with 5 zeros and lands
+    at 0.591. Neither describes what was built. unrepeated_f1 = 0.665 does.
+    This is finding 12's micro/macro divergence showing up for real, and it
+    is why a number without its denominator is meaningless.
+
+21. NOT COMPARABLE TO THE PUBLISHED 30.05 BASELINE, and I should not claim
+    otherwise. Those figures are MIXED template with all 14 fields. This is
+    SINGLE template with 9. Different regime, different field set. The
+    comparison to make later is against my own ablation arms, or against a
+    published number only after matching the split and field set exactly.
+
+22. FAILURE IS CONCENTRATED IN THREE FIELDS, not spread evenly.
+      gross_amount 0.968 and advertiser 0.868 are near solved.
+      tv_address 0.256 is the worst by a wide margin.
+      agency 0.512 splits oddly: recall 0.768, precision 0.384.
+    agency and tv_address need DIFFERENT fixes. agency finds the right value
+    when one exists but invents one when it does not, so it is a
+    hallucination/abstention problem. tv_address is weak at both ends and
+    looks like genuine field confusion, consistent with finding 14 where it
+    returned the station call sign instead of a mailing address.
+    Weeks 4 to 6 should open-code these two first. Fixing tv_address alone
+    is worth roughly 5 points of unrepeated F1.

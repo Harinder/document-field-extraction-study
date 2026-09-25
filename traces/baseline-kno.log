@@ -1,0 +1,22 @@
+split DeepForm-kno_template-train_200-test_141-valid_100-SD_0: 141 test documents
+matched 141 documents in the corpus
+  10/141  96s elapsed  2 from cache
+  20/141  226s elapsed  2 from cache
+  30/141  405s elapsed  2 from cache
+  40/141  534s elapsed  2 from cache
+  50/141  752s elapsed  2 from cache
+  60/141  890s elapsed  2 from cache
+  70/141  1025s elapsed  2 from cache
+  80/141  1121s elapsed  2 from cache
+  90/141  1239s elapsed  2 from cache
+  100/141  1393s elapsed  2 from cache
+  110/141  1511s elapsed  2 from cache
+  120/141  1637s elapsed  2 from cache
+  130/141  1763s elapsed  2 from cache
+  140/141  1876s elapsed  2 from cache
+  141/141  1905s elapsed  2 from cache
+
+wrote predictions/DeepForm-kno_template-train_200-test_141-valid_100-SD_0-test_predictions.json (141 documents)
+score it:
+  PYTHONPATH=vendor uv run python -m vrdu.evaluate \
+    -b data/vrdu -e predictions -o eval_results.tsv

@@ -1,0 +1,2 @@
+task	train_size	metric-micro_f1	metric-macro_f1
+kno_template	200	0.35860465116279067	0.5911949435978638
