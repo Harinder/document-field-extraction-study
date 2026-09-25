@@ -72,9 +72,17 @@ NATIVE_URL = BASE_URL.replace("/v1", "") + "/api/chat"
 # grammar that made generation run away (1787+ tokens and climbing, timing out
 # at 300s). The equivalent {"type":["string","null"]} form completes in ~14s.
 # Same JSON Schema semantics, very different constrained-decoding behaviour.
+# maxLength is load-bearing, not cosmetic. Without it a field is "any string,
+# any length", and echoing the source document into one is valid output under
+# the grammar. Measured on 05998648: unbounded TIMED OUT at 120s while
+# maxLength=120 returned correct values in 6.8s. Constrained decoding
+# guarantees VALID output, not SENSIBLE output, and an unconstrained model
+# would simply have stopped. 120 chars also states something true about this
+# domain: none of these nine values is a paragraph.
 FIELDS = list(AdBuy.model_fields)
 SCHEMA = {"type": "object",
-          "properties": {f: {"type": ["string", "null"]} for f in FIELDS},
+          "properties": {f: {"type": ["string", "null"], "maxLength": 120}
+                         for f in FIELDS},
           "required": FIELDS}
 
 def extract(text):

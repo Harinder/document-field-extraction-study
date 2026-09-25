@@ -128,3 +128,18 @@ all three would have silently corrupted results.
     meant to ask, and four rounds did the work of two. This is exactly the
     discipline week 7's ablation requires (one factor, hypothesis written
     first) and I demonstrated why by not following it.
+
+19. THE RUNAWAY HAS A CONFIRMED CAUSE AND A ONE-LINE FIX. Finding 16 was
+    right about the mechanism and I failed to validate it for several rounds.
+    Decisive test, one variable, document 05998648 (3957 chars):
+      maxLength=120  ->  6.8s, 169 tokens, correct values
+      unbounded      ->  TIMEOUT after 120s
+    It is document-specific: on 030f7df7 the unbounded schema completed in
+    14s. So some documents offer the model a tempting thing to echo and
+    others do not, which is why this looked intermittent and unexplainable
+    for so long.
+    Adding maxLength turns the split from an estimated 18 hours into roughly
+    16 minutes. It is also not a workaround: it encodes a true fact about the
+    domain. An advertiser name is short, a flight date is eight characters.
+    The schema was previously asserting that any of these could be a
+    paragraph, which was never true.
