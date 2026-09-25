@@ -1,0 +1,71 @@
+LABELLING: agency   (85 failures total, showing 10)
+
+Put one of these after 'label:' on each case.
+  incomplete      right value, but truncated (missing city/state/zip)
+  wrong agency    a real agency, but the wrong name
+  not an agency   returned something that is not an agency
+  spurious        document has no such field, model returned one anyway
+  ???             does not fit any of the above (say why)
+
+======================================================================
+
+CASE 1  (0bf61362-120f-90)
+  model gave  : 'STRATEGIC MEDIA'
+  text before : ...1:07 PM / CPE: 572/659/6814 / Flight: 4/22/20 - 4/28/20 / Agency:
+  correct is  : 'STRATEGIC MEDIA, SERVICES'
+  label: incomplete. Part of the name after ,(comma) is not available for Agency name
+
+CASE 2  (b0ae0954-274a-f2)
+  model gave  : 'Del Ray Media'
+  text before : ...Millennium Washingto Millennium/Wası / Special Handling / And: /
+  correct is  : None
+  label: ??? Empty
+
+CASE 3  (88fa6e33-408f-6a)
+  model gave  : 'CO-OP'
+  text before : ...Inc / 1908 Grand Ave / Wausau, WI 54403-6870 / WAOW / WAUSAU / Agency /
+  correct is  : 'Targeted Platform Media (4420)'
+  label: not an agency
+
+CASE 4  (59431bb5-d4ab-77)
+  model gave  : 'Mentzer Media Services'
+  text before : ...gency Ref / 1244 / Advertiser Ref 19713 / Product 1 / 629 / Product 2 /
+  correct is  : None
+  label: ??? None found
+
+CASE 5  (8e517ca3-439c-01)
+  model gave  : 'Assembly Media'
+  text before : ...Order Flight / Billing Address: / 01/25/20 - 01/30/20 / Broadcast /
+  correct is  : None
+  label: ??? None found
+
+CASE 6  (8222d0e9-ba97-47)
+  model gave  : 'MEDIA BUYING AND ANALYTICS'
+  text before : ...Order Flight / Billing Address: / 03/01/20 - 03/03/20 / Broadcast /
+  correct is  : None
+  label: ??? None found
+
+CASE 7  (a5a37afc-bbf5-db)
+  model gave  : 'CO-OP'
+  text before : ...Inc / 1908 Grand Ave / Wausau, WI 54403-6870 / WAOW / WAUSAU / Agency /
+  correct is  : 'FlexPoint Media Inc --EDI (5042)'
+  label: not an agency
+
+CASE 8  (1b358fdc-a965-a0)
+  model gave  : 'BlueWest Media'
+  text before : ...ess: / Philadelphia HRP/PHL / HRP Philadelphia / National / 9917137 /
+  correct is  : None
+  label: ??? None found
+
+CASE 9  (69a0cddd-48d9-00)
+  model gave  : 'Smart Media Group'
+  text before : ...Order Flight / Billing Address: / 03/13/20 - 03/19/20 / Broadcast /
+  correct is  : None
+  label: ??? None found
+
+CASE 10  (2ab23f4b-7df5-57)
+  model gave  : 'Win Company, The /POL'
+  text before : ...# / 06/08/20 - 06/08/20 12 / Product / United States Senate / And: /
+  correct is  : None
+  label: ??? None found
+

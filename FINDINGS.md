@@ -301,3 +301,46 @@ auto-classified all 107 using the categories that came out of those 10.
     checked later: multi-line instruction should recover most of the 25%;
     an explicit "whose address" instruction should recover part of the 44%;
     a stronger null rule should recover part of the 21%.
+
+## 2026-09-24, step 5: agency taxonomy, and why per-field analysis matters
+
+Hand-labelled 10 random agency failures with no categories supplied, having
+done the exercise once on tv_address. The categories that emerged were
+different, which is itself the finding.
+
+  failure mode              agency        tv_address
+  spurious (gold is None)   81.2% (69)    20.6% (22)
+  wrong value               15.3% (13)    54.2% (58)
+  incomplete (truncated)     3.5% (3)     25.2% (27)
+
+  10-case agency sample said 70% spurious; true figure 81.2%. Within
+  sampling error at n=10 and the ranking was correct.
+
+32. AGENCY IS ALMOST ENTIRELY ONE PROBLEM: IT ANSWERS WHEN IT SHOULD NOT.
+    69 of its 85 failures are documents with no agency at all. This is the
+    precision 0.384 / recall 0.768 signature read correctly: when an agency
+    exists the model usually finds it, and when none exists it invents a
+    plausible-looking media company from elsewhere on the page.
+
+33. THE SAME FIX IS WORTH TEN TIMES MORE ON ONE FIELD THAN THE OTHER.
+    Projected effect of perfect abstention (every spurious prediction
+    becomes null; costs zero correct answers):
+      agency       F1 0.512 -> 0.768   (+0.256)
+      tv_address   F1 0.256 -> 0.280   (+0.024)
+    This is the argument for per-field failure analysis in one number. The
+    overall score gives no way to see that abstention is the dominant lever
+    on one field and nearly irrelevant on another.
+
+34. THE TWO WORST FIELDS NEED DIFFERENT FIXES, not one shared one.
+      agency     -> abstention. Stop answering when the field is absent.
+      tv_address -> disambiguation (whose address?) plus completeness
+                    (return the full multi-line value).
+    Had I applied one "improve the prompt" change I would have moved one
+    field and learned nothing about the other.
+
+35. THESE ARE PREDICTIONS, NOT RESULTS. The +0.256 and +0.024 above are
+    what perfect abstention WOULD yield. Recorded before any prompt change
+    so step 6 can compare predicted against actual. If the actual gain is
+    far below the projection, that gap is itself the finding: it would mean
+    the model cannot tell an absent field from a present one, which is a
+    harder problem than instruction-following.
