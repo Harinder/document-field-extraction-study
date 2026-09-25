@@ -181,3 +181,38 @@ Google's annotations.
     returned the station call sign instead of a mailing address.
     Weeks 4 to 6 should open-code these two first. Fixing tv_address alone
     is worth roughly 5 points of unrepeated F1.
+
+## 2026-09-24, step 4: grounding
+
+Run on cached predictions, no new inference. A value the model emits should
+appear in the source OCR text; if not, it was invented.
+
+23. GROUNDING IS A PERFECT NEGATIVE FILTER ON THIS CORPUS.
+      grounded    1212 predictions, 63.6% correct
+      ungrounded    27 predictions,  0.0% correct
+    All 27 ungrounded predictions were wrong. Discarding them removes 27
+    false positives and zero correct answers: precision 0.622 -> 0.636,
+    recall unchanged, unrepeated F1 0.665 -> ~0.673. Small but free, and
+    it is a rule rather than a tuned threshold.
+
+24. RECALL CEILING IS 99.0%. 2217 of 2240 gold values are literally present
+    in the OCR text, so almost nothing is structurally unreachable. The
+    exception is tv_address at 90.0%: 23 of its 231 gold values do not
+    appear in the text at all. About 10% of that field is impossible for
+    any system reading this OCR, and its 0.256 F1 must be reported against
+    a 0.90 ceiling, not 1.00.
+
+25. CORRECTION TO FINDING 22: THE MODEL IS NOT HALLUCINATING. I read
+    agency's precision of 0.384 as fabrication. Grounding disproves it:
+    all 138 agency predictions and 134 of 140 tv_address predictions are
+    real text copied from the document. The model is not inventing values,
+    it is SELECTING THE WRONG ONES.
+    This changes the fix. Fabrication would need abstention and confidence
+    thresholds. Wrong-value selection needs disambiguation: telling the
+    model which of several plausible on-page strings is the one being asked
+    for. It is the same root cause as contract_num choosing between
+    Invoice #, Order # and Estimate Number (finding 8), and as tv_address
+    returning the station call sign (finding 14).
+    Wrong-value selection is now the dominant failure mode of the whole
+    system, and weeks 4 to 6 should open-code for it specifically rather
+    than looking for hallucination.
