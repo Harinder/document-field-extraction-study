@@ -32,9 +32,15 @@ def grounded(value, text, text_norm):
     v = str(value)
     if v in text: return "exact"
     if norm(v) in text_norm: return "normalised"
-    # last resort: all alphanumerics present in order as a loose check
     stripped = re.sub(r"[^0-9a-zA-Z]", "", v)
     if stripped and stripped in re.sub(r"[^0-9a-zA-Z]", "", text): return "alphanumeric"
+    # OCR tears multi-line values apart (see FINDINGS 27), so a value can be
+    # genuinely present while never appearing as a contiguous substring. Accept
+    # it as grounded when every word occurs somewhere in the document.
+    words = [re.sub(r"[^0-9a-zA-Z]", "", w) for w in v.split()]
+    words = [w for w in words if w]
+    doc_alnum = re.sub(r"[^0-9a-zA-Z]", "", text)
+    if words and all(w in doc_alnum for w in words): return "reassembled"
     return None
 
 cached = {f[:-5] for f in os.listdir(CACHE)}

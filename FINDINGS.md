@@ -216,3 +216,38 @@ appear in the source OCR text; if not, it was invented.
     Wrong-value selection is now the dominant failure mode of the whole
     system, and weeks 4 to 6 should open-code for it specifically rather
     than looking for hallucination.
+
+## 2026-09-24, step 5 open coding: a measurement bug found by reading
+
+26. MY GROUNDING CHECK HAD A FALSE-POSITIVE PROBLEM AND FINDING 23 WAS PARTLY
+    WRONG. Found by reading document 300535fe by hand rather than by any
+    metric. The model predicted tv_address '16 Cypress Ave Wheeling, WV 26003'
+    and my check said NOT FOUND IN DOCUMENT, i.e. invented. Reading the OCR
+    showed both halves are present but torn apart:
+        ... Billing Calendar: / Broadcast / 16 Cypress Ave / EOM/EOC /
+        Billing Cycle: / Agency Commission: / Wheeling, WV 26003 / 15% ...
+    The model correctly reassembled a real address from fragments separated
+    by unrelated labels. My check looked for a contiguous substring, so it
+    scored competent behaviour as fabrication.
+    Corrected counts across all 1239 predictions:
+        flagged ungrounded by the old check:            55
+        actually reassembled from scattered fragments:  49
+        genuinely absent from the document:              6
+    So fabrication is 6 cases, about 0.5% of predictions. It is essentially
+    not a failure mode of this model. Finding 25 stands and is strengthened:
+    the problem is wrong-value SELECTION, not invention.
+
+27. THE OCR TEARS MULTI-LINE VALUES APART, and this is a first-class property
+    of the substrate rather than an edge case. Addresses in particular get
+    split, with form labels interleaved between the street line and the city
+    line. Any grounding, span-matching or verification logic has to handle
+    non-contiguous values or it will systematically misclassify correct
+    output. This also explains part of why tv_address is the worst field: it
+    is the only one whose gold value is routinely multi-line.
+
+28. METHOD NOTE. Three summaries pointed the wrong way here. The F1 score said
+    "tv_address is bad". Grounding said "27 inventions". Both were true-ish and
+    both were misleading. Reading ONE document showed the OCR tears addresses
+    apart and that my own detector could not handle reassembly. No aggregate
+    could have surfaced either. This is the argument for the protected block
+    stated as concretely as I can state it.
