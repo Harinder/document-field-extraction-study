@@ -401,3 +401,43 @@ Everything else identical. 141 documents, 0 failures.
     stayed there. Same machine, same model, same settings as the baseline
     run which completed 141 documents in 1905s. Not investigated. Logged so
     it is not silently forgotten.
+
+## 2026-09-25, step 6 arm 2: v3_complete
+
+One paragraph added to BASELINE v1 (not to v2), asking for complete multi-line
+values. 141 documents, 0 failures, 1913s.
+
+  overall unrepeated F1  0.6649 -> 0.6810  (+0.0161)   predicted ~0.69
+  tv_address        F1   0.256  -> 0.398   (+0.142)    predicted 0.33 to 0.40
+
+41. PREDICTION LANDED THIS TIME, at the top of the stated range. The ceiling
+    from perfect completeness was 0.465; the arm reached 0.398, which is 68%
+    of the available gain. Arm 1 reached 25% of its target. The difference is
+    worth noting: completeness is a formatting instruction the model can
+    simply comply with, while abstention requires it to judge that something
+    is absent. Instructions that ask for a different OUTPUT SHAPE land much
+    better than instructions that ask for a different DECISION.
+
+42. THE FIX CHANGED HOW IT ANSWERS, NOT WHAT IT PICKS. By failure mode:
+      CORRECT          33 -> 49   (+16)
+      incomplete       27 ->  3   (-24)   target, nearly eliminated
+      not an address   11 ->  1   (-10)   not targeted
+      spurious         22 -> 10   (-12)   not targeted
+      wrong value      47 -> 65   (+18)   WORSE
+    The +18 are not new failures. They are the same documents moving between
+    categories: a case that used to return 'WSAZ' now returns a complete,
+    well-formed address belonging to the wrong company. Form fixed, selection
+    untouched. tv_address failures are now 71% wrong value (65 of 92), which
+    is the disambiguation problem and the target for arm 3.
+
+43. COLLATERAL DAMAGE IS REAL AND THE HEADLINE HIDES IT. Six of nine fields
+    got slightly worse:
+      tv_address +0.142   property +0.030   agency +0.008
+      product -0.005   advertiser -0.007   gross_amount -0.008
+      flight_to -0.010   contract_num -0.013   flight_from -0.013
+    A rule about returning fuller values makes every field more verbose,
+    which helps one multi-line field and mildly hurts eight single-value
+    ones. Net +0.0161 overall. Reporting only the overall delta would hide
+    both the +0.142 and the eight small regressions, and reporting only the
+    target field would hide the cost entirely. Per-field tables are not
+    decoration.

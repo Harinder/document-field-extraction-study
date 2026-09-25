@@ -1,0 +1,23 @@
+arm: v3_complete   141 documents
+hypothesis: tv_address has 27 incomplete failures (25.2%), where the model finds the right address and returns only the street line. v2 accidentally fixed 6 of them while aiming at abstention, which is evidence completeness responds to prompting. A direct instruction should fix more. Perfect completeness would give tv_address F1 0.465; v2 reached 25% of its target, so predict 0.33 to 0.40, overall unrepeated F1 0.665 to roughly 0.69. Risk: telling it to return more text makes it pad values on fields that were already correct, so watch gross_amount 0.968 and advertiser 0.868 for regressions.
+
+  20/141  263s
+  40/141  545s
+  60/141  902s
+  80/141  1133s
+  100/141  1417s
+  120/141  1664s
+  140/141  1913s
+
+  unrepeated F1 0.6810  P 0.6472  R 0.7185
+
+  per field:
+    advertiser     F1 0.861  P 0.858  R 0.864
+    agency         F1 0.520  P 0.393  R 0.768
+    contract_num   F1 0.603  P 0.650  R 0.563
+    flight_from    F1 0.685  P 0.635  R 0.744
+    flight_to      F1 0.712  P 0.664  R 0.767
+    gross_amount   F1 0.960  P 0.964  R 0.957
+    product        F1 0.736  P 0.712  R 0.762
+    tv_address     F1 0.398  P 0.383  R 0.415
+    property       F1 0.561  P 0.531  R 0.595
