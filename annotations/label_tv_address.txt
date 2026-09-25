@@ -1,0 +1,71 @@
+LABELLING: tv_address   (107 failures total, showing 10)
+
+Put one of these after 'label:' on each case.
+  incomplete      right value, but truncated (missing city/state/zip)
+  wrong company   a real address, but the wrong organisation's
+  not an address  returned something that is not an address
+  spurious        document has no such field, model returned one anyway
+  ???             does not fit any of the above (say why)
+
+======================================================================
+
+CASE 1  (300535fe-5fc6-0f)
+  model gave  : '16 Cypress Ave Wheeling, WV 26003'
+  text before : ...(value is scattered across the page)
+  correct is  : None
+  label: ??? It is empty, so most likely nothing found
+
+CASE 2  (6fa21456-9a31-77)
+  model gave  : '2302 Lapeer Road'
+  text before : ...TRACT / Alt Order # / abc / 12 / Contract / Revision / 1518467 / / WJRT /
+  correct is  : '2302 Lapeer Road, Flint, MI 48503'
+  label: incomplete. Address is there, but State and ZIP are missing
+
+CASE 3  (05a53fa5-6421-cc)
+  model gave  : 'PO BOX 1309 Alexandria, VA 22313'
+  text before : ...# 26904065 CPE: AMFAI/ORDR/380124 Agency: Del Ray Media LLC
+  correct is  : '125 West 55th St, New York, NY 10019'
+  label: wrong company. Address is completely different 
+
+CASE 4  (ec8415e2-54ce-4f)
+  model gave  : '711 Third Ave\n3rd Floor\nNew York, NY 10017'
+  text before : ...pe No/Normal / Package / Gen. Date 2/25/2020 7:25:02AM / Assembly /
+  correct is  : 'PO Box 206270, Dallas, TX 75320-6270'
+  label: wrong company. Address is completely different
+
+CASE 5  (f4134faa-3183-98)
+  model gave  : '2960 North Meridian Street'
+  text before : ...W62 / Contract / Revision / 2186808 / / Alt Order # / 26660858 / WYCW /
+  correct is  : '2960 North Meridian Street, Jill Hammons, Indianapolis, IN 46208'
+  label: incomplete. Address is there, but Person Name, State and ZIP are missing
+
+CASE 6  (632bbd2e-1365-97)
+  model gave  : '711 3rd Avenue'
+  text before : ...on Type: POLITICAL/VOTE / Total $: $1,490.00 / Office: NEW YORK /
+  correct is  : '125 West 55th St, New York, NY 10019'
+  label: wrong company. Address is completely different
+
+CASE 7  (37f66b37-0e7d-97)
+  model gave  : 'PO BOX 1309 Alexandria, VA 22313'
+  text before : ...# 26898588 CPE: AMFAI/ORDR/380129 Agency: Del Ray Media LLC
+  correct is  : '125 West 55th St, New York, NY 10019'
+  label: wrong company. Address is completely different
+
+CASE 8  (685a2568-66ec-e3)
+  model gave  : '513 Hampshire ST'
+  text before : ....00 / $10,555.00 / CO-OP / Quincy Broadcasting Company Advertiser /
+  correct is  : '513 Hampshire ST, Quincy, IL 62301'
+  label: incomplete. Address is there, but City, State and ZIP are missing
+
+CASE 9  (59431bb5-d4ab-77)
+  model gave  : 'WSAZ'
+  text before : ...Page 1 of 4 /
+  correct is  : '645 Fifth Ave., Huntington, WV 25701'
+  label: not an address
+
+CASE 10  (45f3875f-2b24-42)
+  model gave  : 'abc'
+  text before : ...Daily /
+  correct is  : None
+  label:  ??? It it empty
+

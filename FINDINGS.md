@@ -251,3 +251,53 @@ appear in the source OCR text; if not, it was invented.
     apart and that my own detector could not handle reassembly. No aggregate
     could have surfaced either. This is the argument for the protected block
     stated as concretely as I can state it.
+
+## 2026-09-24, step 5: tv_address failure taxonomy
+
+Hand-labelled 10 randomly sampled failures (seed 0, not cherry-picked), then
+auto-classified all 107 using the categories that came out of those 10.
+
+  category          10-case sample    all 107
+  wrong company            40%         43.9%  (47)
+  incomplete               30%         25.2%  (27)
+  spurious                 20%         20.6%  (22)
+  not an address           10%         10.3%  (11)
+  missed entirely           0%          0.0%  (0)
+
+29. TEN HAND-LABELLED CASES PREDICTED 107 TO WITHIN A FEW POINTS ON EVERY
+    CATEGORY. This is the argument for open coding in one line. A small
+    honest sample, labelled by someone actually looking at the data, gives
+    the shape of the whole distribution. Labelling everything was never
+    necessary; labelling nothing would have left the 0.256 F1 undiagnosed.
+
+30. THE CATEGORIES CAME FROM THE DATA, NOT FROM ME. I had predicted
+    "hallucination" from the precision number (finding 22) and was wrong
+    twice: first about fabrication, then about it being one failure mode.
+    It is four, with different causes and different fixes. Distribution:
+
+    incomplete (25%): finds the right address, returns only the street line.
+      Gold is multi-line; AddressMatch allows edit distance 3, so a missing
+      city/state/zip fails by a wide margin. Fix: one prompt sentence asking
+      for the complete multi-line address. Cheapest available win.
+
+    spurious (21%): document has no address; model answers anyway. The prompt
+      already says "return null. Do not infer." It is ignored about a fifth
+      of the time. Needs a stronger instruction or an explicit abstention
+      rule, and is worth measuring separately since it is a precision-only
+      loss.
+
+    wrong company (44%): the page carries several addresses (station, agency,
+      rep firm, billing) and the model picks the wrong one. Same root cause
+      as contract_num choosing between Invoice #, Order # and Estimate Number
+      (finding 8). The prompt never says WHOSE address is wanted.
+
+    not an address (10%): returns call signs like 'WZTV NASHVILLE'. Likely
+      improves with the same disambiguation fix.
+
+31. DO NOT FIX YET. Three of the four have obvious one-line prompt fixes and
+    the temptation is to apply all three at once. Apply them one at a time,
+    with the expected effect written down first, or the ablation in step 6
+    cannot attribute anything. Predicted effects, recorded now so they can be
+    checked later: multi-line instruction should recover most of the 25%;
+    an explicit "whose address" instruction should recover part of the 44%;
+    a stronger null rule should recover part of the 21%.
