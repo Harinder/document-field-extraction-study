@@ -1,0 +1,23 @@
+arm: v2_abstain   141 documents
+hypothesis: agency has 69 spurious predictions (81% of its failures). An explicit paragraph saying many documents lack fields should recover most of them. Predicted: agency F1 0.512 toward 0.768, overall unrepeated F1 0.665 up by roughly 0.02 to 0.03. Risk: it becomes too cautious and recall drops.
+
+  20/141  254s
+  40/141  3224s
+  60/141  7356s
+  80/141  8642s
+  100/141  10335s
+  120/141  13420s
+  140/141  17472s
+
+  unrepeated F1 0.6784  P 0.6479  R 0.7120
+
+  per field:
+    advertiser     F1 0.875  P 0.872  R 0.879
+    agency         F1 0.552  P 0.431  R 0.768
+    contract_num   F1 0.625  P 0.714  R 0.556
+    flight_from    F1 0.693  P 0.642  R 0.752
+    flight_to      F1 0.744  P 0.714  R 0.776
+    gross_amount   F1 0.968  P 0.971  R 0.964
+    product        F1 0.763  P 0.736  R 0.792
+    tv_address     F1 0.279  P 0.257  R 0.305
+    property       F1 0.530  P 0.489  R 0.578

@@ -344,3 +344,60 @@ different, which is itself the finding.
     far below the projection, that gap is itself the finding: it would mean
     the model cannot tell an absent field from a present one, which is a
     harder problem than instruction-following.
+
+## 2026-09-25, step 6 arm 1: v2_abstain
+
+Changed exactly one file: the null instruction became an explicit paragraph.
+Everything else identical. 141 documents, 0 failures.
+
+  overall unrepeated F1  0.6649 -> 0.6784  (+0.0135)   predicted +0.02 to 0.03
+    precision            0.6223 -> 0.6479  (+0.0256)
+    recall               0.7139 -> 0.7120  (-0.0019)
+
+  agency      F1 0.512 -> 0.552  (+0.040)   PREDICTED +0.256. Got 16% of it.
+  tv_address  F1 0.256 -> 0.279  (+0.023)   predicted +0.024. Right number,
+                                            WRONG REASON, see finding 38.
+
+36. THE PREDICTION MISSED BY 6x AND THE MECHANISM EXPLAINS WHY. On the 72
+    documents with no agency:
+      baseline returned null   3/72  ( 4.2%)
+      v2_abstain returned null 18/72 (25.0%)
+    The instruction worked, six times more abstention, but reached only a
+    quarter of the cases. The projected +0.256 assumed 100% abstention. A
+    prompt got 25% of the way there. Recording the projection first is what
+    makes this measurable rather than a vague "it helped a bit".
+
+37. THE MODEL NEVER ABSTAINS WRONGLY. On the 69 documents where an agency IS
+    present, both arms returned null 0 times. Same for tv_address: 0 false
+    abstentions out of 118 present cases in both arms. So when it decides to
+    return null it is right 100% of the time. It is not confused about
+    absence, it is BIASED TOWARD ANSWERING. That is a different problem from
+    "cannot tell", and it is the one step 7 should attack: a confidence
+    threshold can exploit a signal the model already has, where a prompt is
+    just asking more loudly.
+
+38. RIGHT ANSWER, WRONG REASON, and I nearly recorded it as a success. The
+    tv_address prediction (+0.024 from abstention) matched the measurement
+    (+0.023) almost exactly. But tv_address abstention did not change at all
+    (1/23 in both arms). Every one of the 6 gained cases is an INCOMPLETENESS
+    fix:
+      'PO Box 1001'          -> 'PO Box 1001 Quincy, IL 62306-1001'
+      '2302 Lapeer Road'     -> '2302 Lapeer Road, Flint, MI 48503'
+    An instruction written to make the model answer LESS made it answer more
+    COMPLETELY. Had I checked only the F1 delta against the prediction I would
+    have concluded my model of the system was correct when it was not.
+
+39. "ONE FACTOR AT A TIME" IS HARDER THAN IT SOUNDS WITH PROMPTS. I changed
+    one file and believed that was one factor. It was not: rewording the null
+    rule also changed copying behaviour, so two effects moved at once and
+    they partly cancelled (6 gained, 3 lost on tv_address). A prompt is a
+    single artifact but not a single variable. Future arms need either a
+    minimal diff (one sentence, nothing else touched) or per-failure-mode
+    measurement rather than per-field F1, which is what caught this.
+
+40. TIMING ANOMALY, UNEXPLAINED. The arm took 17472s (4.9 hours) against a
+    projection of 23 minutes measured from its own first 20 documents
+    (254s). Rate degraded from ~13s/doc to ~150s/doc partway through and
+    stayed there. Same machine, same model, same settings as the baseline
+    run which completed 141 documents in 1905s. Not investigated. Logged so
+    it is not silently forgotten.
