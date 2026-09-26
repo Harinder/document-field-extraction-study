@@ -1,0 +1,12 @@
+40 documents x 3 samples at temperature 0.7
+  10/40  254s
+  20/40  508s
+  30/40  819s
+  40/40  1067s
+
+=== does agreement predict correctness? (3 samples) ===
+  samples agreeing              n   accuracy
+  3 of 3 agree                 333      75.1%
+  2 of 3 agree                  24      33.3%
+  1 of 3 agree                   3      33.3%
+  (all)                       360      71.9%

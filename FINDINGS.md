@@ -557,3 +557,50 @@ Built on the v4_whose predictions, no new inference. 1230 non-null predictions,
     the question is which mechanism surfaces it. Self-consistency is the one
     worth testing next: on a 40-document subset at 3 samples it is about 25
     minutes and directly tests whether disagreement predicts error.
+
+## 2026-09-26, step 7: self-consistency (real signal, narrow reach)
+
+40 documents x 3 samples at temperature 0.7 with the v4_whose prompt, different
+seeds. 360 field predictions, 1067s.
+
+  3 of 3 agree   333 preds  75.1% correct   Wilson 95% CI [70.2, 79.4]
+  2 of 3 agree    24 preds  33.3% correct
+  1 of 3 agree     3 preds  33.3% correct
+  disagreement combined  27 preds  33.3%    Wilson 95% CI [18.6, 52.2]
+  overall        360 preds  71.9% correct
+
+53. SELF-CONSISTENCY IS THE FIRST CONFIDENCE SIGNAL THAT BEATS THE TRIVIAL
+    BASELINE. A 42-point accuracy gap between unanimous and split answers,
+    and the Wilson intervals do not overlap, so the separation holds even
+    at n=27. Efficiency comparison:
+      self-consistency  drop 7.5% of answers, gain 3.2 points   0.43 pts/%
+      field prior       drop 50%  of answers, gain 12.3 points  0.25 pts/%
+    Nearly twice the accuracy gain per unit of coverage sacrificed. It is
+    also the only signal so far that varies WITHIN a field, which is what
+    findings 48 to 52 said was required.
+
+54. BUT 92.5% OF PREDICTIONS ARE UNANIMOUS AT TEMPERATURE 0.7. Disagreement
+    flags only 27 of 360. Same shape as grounding: clean signal, almost no
+    reach. To use it you pay 3x inference to identify 7.5% of your answers
+    as suspect. Whether that trades well depends entirely on whether there
+    is a human review queue on the other side.
+
+55. THE MODEL IS STABLE IN ITS ERRORS, NOT UNCERTAIN ABOUT THEM, and three
+    separate findings now say the same thing:
+      finding 11  temperature 0 gave byte-identical answers across runs
+      finding 37  it never abstains wrongly; when it says null it is right
+      finding 54  it will not disagree with itself even at temperature 0.7
+    It is confidently wrong. That is why arm 1's abstention prompt reached
+    only 25%, and why no sampling method will surface most of the errors.
+    Systematic errors need a different instrument than uncertainty estimates.
+
+56. CONSTRAINED DECODING PROBABLY CAUSES THE COLLAPSE, and this is a real
+    tradeoff nobody mentions when recommending strict schema modes. With a
+    JSON schema, maxLength 120, and a document containing one obvious
+    candidate, the set of valid next tokens at each step is small.
+    Temperature can only spread probability across choices that exist, and
+    the grammar has removed most of them. Structured output bought
+    guaranteed-parseable answers and cost the ability to measure uncertainty
+    by sampling. Not tested directly; testing it would mean sampling without
+    the schema and comparing diversity, which is a clean follow-up
+    experiment and is not run here.
