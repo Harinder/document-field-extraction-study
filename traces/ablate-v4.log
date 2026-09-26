@@ -1,0 +1,23 @@
+arm: v4_whose   141 documents
+hypothesis: tv_address failures are 44% wrong value at baseline (47 of 107): the page carries station, agency, advertiser and rep-firm addresses and the model picks the wrong one. Derived the rule from the data: gold sits near the station call sign or after REMIT TO. Telling the model whose address is wanted should convert wrong-value cases to correct. Ceiling if all 47 fixed is 0.62; predict tv_address 0.256 to 0.35-0.42. Secondary: agency may improve too since it is the same confusion, and contract_num shares the root cause though this prompt does not address it. Risk: naming three organisations adds length and may distract on fields that were fine.
+
+  20/141  248s
+  40/141  546s
+  60/141  1004s
+  80/141  1259s
+  100/141  1545s
+  120/141  2232s
+  140/141  4270s
+
+  unrepeated F1 0.7212  P 0.6772  R 0.7713
+
+  per field:
+    advertiser     F1 0.897  P 0.894  R 0.900
+    agency         F1 0.581  P 0.440  R 0.855
+    contract_num   F1 0.679  P 0.684  R 0.674
+    flight_from    F1 0.682  P 0.630  R 0.744
+    flight_to      F1 0.717  P 0.659  R 0.784
+    gross_amount   F1 0.968  P 0.971  R 0.964
+    product        F1 0.748  P 0.721  R 0.777
+    tv_address     F1 0.534  P 0.512  R 0.559
+    property       F1 0.612  P 0.561  R 0.672

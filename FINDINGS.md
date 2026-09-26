@@ -441,3 +441,64 @@ values. 141 documents, 0 failures, 1913s.
     both the +0.142 and the eight small regressions, and reporting only the
     target field would hide the cost entirely. Per-field tables are not
     decoration.
+
+## 2026-09-26, step 6 arm 3: v4_whose
+
+One paragraph added to BASELINE v1 naming which organisation each field refers
+to. Rule derived from the data, not guessed: gold tv_address sits near the
+station call sign or after "REMIT TO" ('remit' appeared 23 times in preceding
+context). 141 documents, 0 failures, 4270s.
+
+  overall unrepeated F1  0.6649 -> 0.7212  (+0.0563)   BEST ARM
+  tv_address        F1   0.256  -> 0.534   (+0.278)    predicted 0.35-0.42, EXCEEDED
+                                                        86% of the 0.620 ceiling
+
+  per field: tv_address +0.278, property +0.081, agency +0.069,
+             contract_num +0.063, advertiser +0.029, product +0.007,
+             gross_amount 0, flight_to -0.005, flight_from -0.016
+  Seven of nine improved or held. Arm 2 regressed six.
+
+44. THE BEST ARM FAILED AT ITS STATED PURPOSE. By failure mode:
+      CORRECT          33 -> 66  (+33)
+      wrong value      47 -> 50  ( +3)   the target, UNCHANGED
+      incomplete       27 ->  1  (-26)
+      not an address   11 ->  0  (-11)
+      spurious         22 -> 12  (-10)
+    I wrote this prompt to fix wrong-company selection. It did not fix it.
+    It fixed the FORM problems again, more thoroughly than arm 2 did and
+    without arm 2's collateral damage, probably because describing what a
+    remittance address is teaches the shape implicitly while "it is NOT the
+    agency's address" discourages grabbing a nearby wrong value.
+
+45. WRONG-VALUE SELECTION IS UNSOLVED AND IS NOW THE WHOLE PROBLEM. 50 of
+    tv_address's 63 remaining failures. Three prompt arms have moved it by
+    +3, -0 and +3. Prompting has not touched it. If it is to be fixed it
+    needs a different mechanism: retrieval of the right text span, a
+    two-stage approach that first locates the station block, or per-field
+    few-shot examples. That is a step 7 or step 8 question, not another
+    prompt reword.
+
+46. THREE ARMS, THREE TIMES THE MECHANISM DIFFERED FROM THE DESIGN INTENT.
+      arm 1 aimed at abstention: got 25% of it, and accidentally improved
+             completeness on tv_address.
+      arm 2 aimed at completeness: hit it, and accidentally improved
+             not-an-address and spurious, while converting fixed cases into
+             wrong-value ones.
+      arm 3 aimed at disambiguation: did not achieve it at all, and instead
+             delivered the largest form-fix of the three.
+    An F1 delta tells you IF something changed, never WHY. Every one of these
+    three arms would have been written up as a confirmed hypothesis if I had
+    stopped at the score. The per-failure-mode breakdown is the only thing
+    that caught it, all three times.
+
+47. REFINEMENT OF FINDING 41. I had concluded shape instructions land and
+    decision instructions do not. Arm 3 is neither: it is semantic, telling
+    the model what the field MEANS. It beat both, and it helped seven fields
+    instead of hurting six. Revised ordering of what prompting buys, on this
+    task:
+      semantic clarity (what the field means)   largest, broadly positive
+      output shape (how to format)              moderate, narrow, with costs
+      decisions (when to abstain)               smallest
+    contract_num gained +0.063 without being mentioned in the prompt at all,
+    which supports the semantic reading: clarifying the document's cast of
+    organisations helps fields that were never named.
