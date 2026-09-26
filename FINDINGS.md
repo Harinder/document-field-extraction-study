@@ -502,3 +502,58 @@ context). 141 documents, 0 failures, 4270s.
     contract_num gained +0.063 without being mentioned in the prompt at all,
     which supports the semantic reading: clarifying the document's cast of
     organisations helps fields that were never named.
+
+## 2026-09-26, step 7: confidence from free features (weak result)
+
+Built on the v4_whose predictions, no new inference. 1230 non-null predictions,
+67.7% correct overall.
+
+48. GROUNDING QUALITY PREDICTS CORRECTNESS MONOTONICALLY, BUT REACHES ALMOST
+    NOTHING.
+      exact match in text   1160 preds  69.8% correct
+      whitespace difference   37 preds  40.5% correct
+      reassembled fragments   28 preds  28.6% correct
+      absent entirely          5 preds   0.0% correct
+    The ordering is clean and real. But 94% of predictions are exact matches,
+    so this feature separates only 70 of 1230. Useful as a hard filter on the
+    5 absent cases, useless as a ranking signal.
+
+49. THE STRONGEST AVAILABLE SIGNAL IS JUST WHICH FIELD IT IS, which means it
+    is a prior rather than confidence.
+      gross_amount 97.1%   advertiser 89.4%   product 72.1%
+      contract_num 68.4%   flight_to 65.9%    flight_from 63.0%
+      property 56.1%       tv_address 51.2%   agency 44.0%
+    A 53-point spread. But a per-field rate cannot tell me WHICH agency
+    predictions are good, only that agency is bad on average. That is not
+    per-prediction confidence and should not be reported as if it were.
+
+50. MY RISK-COVERAGE CURVE IS BARELY BETTER THAN A TRIVIAL BASELINE, and this
+    is the honest headline of step 7 so far.
+      coverage  accuracy      vs dropping worst fields outright
+        100%      67.7%       all 9 fields            67.7%
+         90%      72.1%       drop agency             70.6%
+         80%      73.6%       drop agency+tv_address  73.2%
+         70%      75.6%       drop 3 fields           76.1%
+         50%      80.0%       drop 4 fields           78.7%
+    At 70% coverage the trivial rule BEATS my score. The curve is dominated by
+    field identity, so it is field-dropping with extra steps. Reporting the
+    curve without this comparison would have made a prior look like a model.
+
+51. THE CURVE ABOVE IS LEAKY AND MUST NOT BE REPORTED AS A RESULT. The
+    per-field rates used to rank were computed on the same 141 documents being
+    scored. The split's valid set (100 documents) has never been used and is
+    the correct place to fit. Doing it properly requires a run on valid, which
+    is the next step, not this one.
+
+52. WHAT THIS IMPLIES FOR REAL CONFIDENCE. A useful signal must vary WITHIN a
+    field. Free features do not: grounding is flat across 94% of cases and
+    field identity is constant by definition. The signals that would vary are
+    all paid:
+      self-consistency  sample N times, measure agreement. Costs Nx inference.
+      verbalized        ask the model for a score. One extra field, cheap, but
+                        known to be poorly calibrated.
+      logprobs          not exposed on ollama's native /api/chat path.
+    Finding 37 says the signal exists (the model never abstains wrongly), so
+    the question is which mechanism surfaces it. Self-consistency is the one
+    worth testing next: on a 40-document subset at 3 samples it is about 25
+    minutes and directly tests whether disagreement predicts error.
