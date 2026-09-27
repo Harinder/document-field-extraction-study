@@ -4,7 +4,7 @@ version = "0.1.0"
 description = "Field extraction from scanned TV ad-buy invoices, scored by VRDU's own evaluator"
 readme = "README.md"
 authors = [
-    { name = "HS", email = "H@AwakeQubit.com" }
+    { name = "HS", email = "279475+Harinder@users.noreply.github.com" }
 ]
 requires-python = ">=3.9"
 dependencies = [
