@@ -9,12 +9,12 @@ wheels/
 # Virtual environments
 .venv
 
-# Secrets — never commit
+# Secrets. Never commit these
 .env
 .env.*
 !.env.example
 
-# Dataset — Google's annotations, license unstated; fetch, don't redistribute
+# Dataset. Google's annotations, license unstated; fetch rather than redistribute
 data/
 
 # Local working notes. These live one level up and are never part of the study.
