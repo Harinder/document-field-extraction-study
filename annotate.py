@@ -11,7 +11,8 @@ behaviour.
   uv run python annotate.py tv_address   # one field only
   uv run python annotate.py --stats      # progress so far
 
-Keys: type a note and Enter to save. Blank to skip. 'q' to quit (resumable).
+Keys: type a note and Enter to save. Blank to skip. 'q', 'quit' or 'exit' to
+stop (resumable).
 """
 import gzip, json, os, random, re, sys
 sys.path.insert(0, "vendor")
@@ -86,7 +87,7 @@ for i, (fn, f, p, gv) in enumerate(failures, 1):
         note = input("\n  note (blank=skip, q=quit) > ").strip()
     except (EOFError, KeyboardInterrupt):
         break
-    if note.lower() == "q": break
+    if note.lower() in ("q", "quit", "exit"): break
     if note:
         out.write(json.dumps({"doc": fn, "field": f, "pred": p,
                               "gold": gv, "note": note}) + "\n")

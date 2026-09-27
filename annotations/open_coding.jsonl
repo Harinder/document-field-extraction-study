@@ -1,2 +1,0 @@
-{"doc": "6fa21456-9a31-77e1-666c-1b5d2854b9f5.pdf", "field": "tv_address", "pred": "2302 Lapeer Road", "gold": ["2302 Lapeer Road\nFlint, MI 48503\n", "2302 Lapeer Road\nFlint, MI 48503\n", "2302 Lapeer Road\nFlint, MI 48503\n"], "note": "e"}
-{"doc": "05a53fa5-6421-cceb-2bf6-275a4e08a69a.pdf", "field": "tv_address", "pred": "PO BOX 1309 Alexandria, VA 22313", "gold": ["125 West 55th St\nNew York, NY 10019\n", "125 West 55th St\nNew York, NY 10019\n"], "note": "exit"}
