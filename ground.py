@@ -8,8 +8,8 @@ Measures three things:
   1. Groundable rate per field: how often a predicted value is literally present.
   2. Whether ungrounded predictions are more often wrong (does grounding
      actually predict correctness?).
-  3. The RECALL FLOOR: gold values not present in the OCR at all, which no
-     extraction system reading this text could ever reach.
+  3. The RECALL CEILING: how many gold values are present in the OCR at all.
+     The rest are out of reach for any extraction system reading this text.
 """
 import gzip, json, os, re, sys
 sys.path.insert(0, "vendor")
@@ -92,8 +92,8 @@ tgr = sum(s["gnd_right"] for s in stats.values()); tur = sum(s["ungnd_right"] fo
 print("\n  TOTAL        grounded %d (%.1f%% correct)   ungrounded %d (%.1f%% correct)" % (
     tg, 100*tgr/tg if tg else 0, tu, 100*tur/tu if tu else 0))
 
-print("\n=== 2. recall floor: gold values not present in the OCR at all ===")
-print("%-14s %6s %9s %8s" % ("FIELD","gold","in text","floor"))
+print("\n=== 2. recall ceiling: share of gold values present in the OCR ===")
+print("%-14s %6s %9s %8s" % ("FIELD","gold","in text","ceiling"))
 for f in sorted(floor, key=lambda x: floor[x]["present"]/floor[x]["gold"] if floor[x]["gold"] else 1):
     d_ = floor[f]
     if not d_["gold"]: continue

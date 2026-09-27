@@ -50,8 +50,7 @@ for fn, d in docs.items():
         gv = gold.get(f, [])
         correct = bool(gv) and getattr(m, matcher).match([v], [[x] for x in gv])
         rows.append({"field": f, "value": str(v), "correct": correct,
-                     "ground": grounding(v, text), "len": len(str(v)),
-                     "words": len(str(v).split())})
+                     "ground": grounding(v, text)})
 
 n = len(rows); acc = sum(r["correct"] for r in rows)/n
 print(f"arm {ARM}: {n} non-null predictions, {100*acc:.1f}% correct overall\n")
@@ -78,10 +77,9 @@ for f in sorted(MATCH, key=lambda x: -sum(r["correct"] for r in rows if r["field
 # LEAKAGE WARNING, stated up front: the per-field rates used to rank below are
 # computed on the SAME data being scored. That inflates the curve and the
 # numbers are illustrative only. The honest version fits rates on the split's
-# valid set (100 documents, never used so far) and reports on test. Doing it
-# properly is the next run, not this one.
+# valid set (100 documents, never used so far) and reports on test. That run
+# has not been done yet, see docs/open-questions.md.
 # ---------------------------------------------------------------------------
-from collections import defaultdict
 field_rate = {}
 for f in MATCH:
     sub = [r for r in rows if r["field"] == f]

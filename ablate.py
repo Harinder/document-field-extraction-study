@@ -7,9 +7,9 @@ arms that make things worse.
   uv run python ablate.py v2_abstain "abstention fix should recover most of
       agency's 69 spurious predictions, predicted agency F1 0.512 -> ~0.768"
 
-  uv run python ablate.py v2_abstain --limit 50     # faster directional read
+  uv run python ablate.py v2_abstain "<hypothesis>" --limit 50   # faster directional read
 """
-import gzip, json, os, re, sys, time, urllib.request
+import gzip, json, os, sys, time, urllib.request
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -67,7 +67,6 @@ for i, fn in enumerate(targets, 1):
     if i % 20 == 0: print(f"  {i}/{len(targets)}  {time.time()-t0:.0f}s", flush=True)
 
 # score with Google's evaluator
-import importlib
 sys.path.insert(0,"vendor")
 from vrdu import benchmark_utils
 results = {}

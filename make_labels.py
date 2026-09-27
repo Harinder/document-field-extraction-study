@@ -1,5 +1,13 @@
-"""Write the failure cases to a plain text file you can open and fill in."""
-import gzip, json, os, random, re, sys
+"""Write one field's failure cases to a plain text file for hand-labelling.
+
+  uv run python make_labels.py tv_address 10    # field, number of cases
+
+Refuses to overwrite an existing annotations/label_<field>.txt, because the
+committed ones hold my hand labels. The category list it writes is the
+tv_address one whatever the field; annotations/label_agency.txt uses an agency
+version that is not in this script.
+"""
+import gzip, json, os, random, sys
 sys.path.insert(0, "vendor")
 from vrdu import match_utils as m
 
@@ -40,6 +48,8 @@ for fn, d in docs.items():
 random.seed(0); random.shuffle(fails)
 
 out = f"annotations/label_{FIELD}.txt"
+if os.path.exists(out):
+    sys.exit(f"{out} already exists and may hold hand labels. Move it aside first.")
 os.makedirs("annotations", exist_ok=True)
 with open(out, "w") as f:
     f.write(f"LABELLING: {FIELD}   ({len(fails)} failures total, showing {N})\n\n")

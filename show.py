@@ -5,6 +5,8 @@
 This is what the MODEL saw. Not the PDF, not the layout, just the text.
 """
 import gzip, json, os, sys
+if len(sys.argv) < 2:
+    sys.exit(__doc__)
 key = sys.argv[1]
 CACHE = "traces/DeepForm-kno_template-train_200-test_141-valid_100-SD_0"
 with gzip.open("data/adbuy.jsonl.gz", "rt") as fh:
@@ -29,7 +31,7 @@ if rows:
 
 p = os.path.join(CACHE, d["filename"] + ".json")
 if os.path.exists(p):
-    print("\n--- WHAT THE MODEL PREDICTED ---")
+    print("\n--- WHAT THE MODEL PREDICTED (v1 prompt) ---")
     for k, v in json.load(open(p)).items():
         print("  %-14s %r" % (k, v))
 

@@ -14,9 +14,8 @@ from dotenv import load_dotenv
 from pydantic import BaseModel
 
 load_dotenv()
-BASE_URL = os.environ.get("BASE_URL") or None
-MODEL = os.environ.get("MODEL", "gpt-5")
-API_KEY = os.environ.get("OPENAI_API_KEY") or os.environ.get("MODEL_API_KEY")
+BASE_URL = os.environ.get("BASE_URL") or "http://localhost:11434/v1"
+MODEL = os.environ.get("MODEL", "qwen3-14b-32k")
 
 SPLIT = sys.argv[1] if len(sys.argv) > 1 else None
 LIMIT = int(sys.argv[sys.argv.index("--limit") + 1]) if "--limit" in sys.argv else None

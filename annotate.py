@@ -14,7 +14,7 @@ behaviour.
 Keys: type a note and Enter to save. Blank to skip. 'q', 'quit' or 'exit' to
 stop (resumable).
 """
-import gzip, json, os, random, re, sys
+import gzip, json, os, random, sys
 sys.path.insert(0, "vendor")
 from vrdu import match_utils as m
 
