@@ -16,3 +16,8 @@ wheels/
 
 # Dataset — Google's annotations, license unstated; fetch, don't redistribute
 data/
+
+# Local working notes. These live one level up and are never part of the study.
+*-plan.md
+learning-walkthrough.md
+archive-*.md
