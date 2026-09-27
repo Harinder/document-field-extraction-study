@@ -5,10 +5,9 @@
 
 ## Context
 
-The headline number is produced by Google's evaluator, not by me. So "correct" is
-defined by their match functions, not by string equality and not by my judgement.
-Before designing the extraction pipeline I read the scoring code to find out what
-it actually accepts.
+The headline number is produced by Google's evaluator, so "correct" here means
+whatever their match functions accept, which is not the same as string equality.
+Before designing the extraction pipeline I read that code.
 
 ## The schema
 

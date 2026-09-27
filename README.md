@@ -9,11 +9,10 @@ evaluator.
 ### Why
 
 Document field extraction is a problem I kept reading about without really
-understanding, so I rebuilt one against a public benchmark. The rule I set for
-myself was that no number in this repo would be one I had graded myself. Someone
-else owns the labels, someone else owns the scoring code, and I don't get a vote
-on what counts as correct. That rules out most of the ways a project like this
-quietly flatters its author.
+understanding, so I rebuilt one against a public benchmark. VRDU ships its own
+annotations and its own evaluator, so correctness here is whatever Google's match
+functions say it is, which removes most of the ways a project like this quietly
+flatters its author.
 
 The other reason is that "the model got better at extraction" is a claim I have
 seen made a lot and explained almost never. I wanted the version where you can
@@ -23,9 +22,8 @@ say which failure mode moved and by how much.
 
 Nine fields off FCC political advertising invoices: advertiser, agency, contract
 number, flight start and end, gross amount, product, station address, property.
-141 test documents from VRDU Ad-buy Forms. Google Research wrote the annotations
-and the evaluator; the evaluator is vendored here unmodified and the labels are
-untouched.
+141 test documents from VRDU Ad-buy Forms, using Google Research's annotations
+and their evaluator, vendored here unmodified.
 
 The score went from 0.665 to 0.721 unrepeated F1 across four prompt revisions.
 That is the least interesting thing in the repo. The rest is a record of where
@@ -64,8 +62,8 @@ Everything that number depends on, in one place:
 | Dataset | VRDU Ad-buy Forms (Google Research), FCC political advertising public files |
 | Split | `DeepForm-kno_template-train_200-test_141-valid_100-SD_0`, seed 0 |
 | Denominator | 141 test documents, 9 unrepeated fields (1269 slots). Not the 5 line-item fields |
-| Labels | Google's annotations, not mine |
-| Scorer | Google's `vrdu/evaluate.py`, vendored unmodified in `vendor/vrdu/` |
+| Labels | Google Research's annotations |
+| Scorer | Google Research's `vrdu/evaluate.py`, vendored unmodified in `vendor/vrdu/` |
 | Model | `qwen3:14b` (14.8B params, Q4_K_M) via Ollama, `num_ctx 32768`, temperature 0, `think=false`, per-field `maxLength 120` |
 | Prompt | `prompts/v4_whose.txt`. Zero-shot, single call, constrained JSON output |
 | Failures | 0 documents failed or were skipped in any scored run |
