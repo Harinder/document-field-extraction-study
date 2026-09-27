@@ -1,8 +1,9 @@
 [project]
-name = "adbuy-extract"
+name = "document-field-extraction-study"
 version = "0.1.0"
 description = "Field extraction from scanned TV ad-buy invoices, scored by VRDU's own evaluator"
 readme = "README.md"
+license = "MIT"
 authors = [
     { name = "HS", email = "279475+Harinder@users.noreply.github.com" }
 ]
@@ -15,10 +16,3 @@ dependencies = [
     "pydantic>=2.13.5",
     "python-dotenv>=1.2.1",
 ]
-
-[project.scripts]
-adbuy-extract = "adbuy_extract:main"
-
-[build-system]
-requires = ["uv_build>=0.12.15,<0.13.0"]
-build-backend = "uv_build"
