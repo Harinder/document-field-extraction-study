@@ -604,3 +604,57 @@ seeds. 360 field predictions, 1067s.
     by sampling. Not tested directly; testing it would mean sampling without
     the schema and comparing diversity, which is a clean follow-up
     experiment and is not run here.
+
+## 2026-09-26, step 8: writing it up
+
+57. WRITING THE README FOUND A VERIFICATION GAP I DID NOT KNOW I HAD. The
+    per-field baseline numbers existed only inside a log line from a run three
+    days earlier, and the baseline run's own log did not print them at all. I
+    had been deriving them by subtracting the deltas quoted in findings 43 and
+    the arm 3 block. That works until one of those deltas is a typo, and then
+    every derived number is wrong with no way to notice.
+    Fixed by writing score_arm.py, which re-scores any arm from its cached
+    responses with zero inference. Re-scored v1 and all nine fields matched the
+    derived values exactly (advertiser 0.868, agency 0.512, contract_num 0.616,
+    flight_from 0.698, flight_to 0.722, gross_amount 0.968, product 0.741,
+    tv_address 0.256, property 0.531).
+    The derivation happened to be right. The point is that I could not have
+    known that before checking, and a published table nobody can regenerate is
+    a claim rather than a measurement. Caching every raw response per arm, a
+    decision made for speed in step 6, is what made the check cost 4 seconds
+    instead of 5 hours.
+
+58. THE ENDPOINT CHOICE FORECLOSED THE CONFIDENCE APPROACH, and I only saw the
+    causal chain while writing ADR 0002. Thinking mode could not be disabled on
+    ollama's /v1 path (finding 15), so I moved to native /api/chat. Native
+    /api/chat does not expose token logprobs. Logprobs are the cheapest and
+    best-calibrated confidence signal in the literature. So a decision taken
+    purely to cut 10x wall clock in step 3 removed the best available option in
+    step 7, three weeks of project time later, and nothing flagged it at the
+    time.
+    This is the shape of infrastructure decision worth writing down: it was
+    correct on its own terms, it had no visible cost when made, and its real
+    cost was paid by a part of the system that did not exist yet.
+
+59. THE HONEST HEADLINE IS NOT THE F1. Ranked by what survived scrutiny:
+      the model is confidently wrong, not uncertain (findings 11, 37, 54, 55)
+      wrong-value selection is the whole remaining problem (findings 25, 45)
+      an F1 delta never tells you WHY, three arms for three (finding 46)
+      constrained decoding may have caused the collapse it also prevents
+        (findings 16, 19, 56)
+    0.6649 -> 0.7212 is the fourth most interesting thing here, and it is the
+    only one a leaderboard would record.
+
+60. WHAT I WOULD DO DIFFERENTLY, in order of how much time it cost me.
+    Run the valid split on day one so there is always a clean surface to
+    report on. I have a leaky risk-coverage curve and a selected-on-test best
+    arm purely because I never held anything back, and both are now caveats
+    in the README instead of results.
+    Print per-field scores from every run, including the very first. Cost me
+    findings I had to reconstruct later.
+    Measure per-failure-mode, not per-field, from the first ablation onward.
+    The score moved for the wrong reason three times out of three, and the
+    per-field table caught none of them.
+    Read one document by hand before trusting any detector I wrote. My
+    grounding check was wrong for two days and only reading document 300535fe
+    exposed it.

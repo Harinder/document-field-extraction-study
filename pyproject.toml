@@ -1,7 +1,7 @@
 [project]
 name = "adbuy-extract"
 version = "0.1.0"
-description = "Add your description here"
+description = "Field extraction from scanned TV ad-buy invoices, scored by VRDU's own evaluator"
 readme = "README.md"
 authors = [
     { name = "HS", email = "H@AwakeQubit.com" }
