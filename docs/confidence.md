@@ -42,7 +42,7 @@ probability across choices that still exist. Structured output bought guaranteed
 parseable answers and plausibly cost the ability to measure uncertainty by
 sampling. That tradeoff appears in none of the "always use strict schema mode"
 advice I read. It is untested here; testing it means sampling without the schema
-and comparing diversity, which is the first experiment I would run next.
+and comparing diversity, which is the experiment I would run after the valid split.
 
 [ADR 0002](adr/0002-confidence-and-abstention.md) has the full comparison
 and the routing decision that came out of it.

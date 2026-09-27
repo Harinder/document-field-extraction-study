@@ -163,6 +163,8 @@ Google's annotations.
     at 0.591. Neither describes what was built. unrepeated_f1 = 0.665 does.
     This is finding 12's micro/macro divergence showing up for real, and it
     is why a number without its denominator is meaningless.
+    [Later note: finding 12 is about schema breadth, not micro/macro, so this
+    cross-reference points at the wrong finding.]
 
 21. NOT COMPARABLE TO THE PUBLISHED 30.05 BASELINE, and I should not claim
     otherwise. Those figures are MIXED template with all 14 fields. This is
@@ -201,6 +203,10 @@ appear in the source OCR text; if not, it was invented.
     appear in the text at all. About 10% of that field is impossible for
     any system reading this OCR, and its 0.256 F1 must be reported against
     a 0.90 ceiling, not 1.00.
+    [Later note: wrong, for the reason finding 26 gives. The check only looked
+    for contiguous text. Google's character spans put each of these 23
+    tv_address values in two or three separate places in the OCR, so all of
+    them are on the page and the ceiling is not 0.90.]
 
 25. CORRECTION TO FINDING 22: THE MODEL IS NOT HALLUCINATING. I read
     agency's precision of 0.384 as fabrication. Grounding disproves it:

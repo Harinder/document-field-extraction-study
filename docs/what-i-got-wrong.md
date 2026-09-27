@@ -23,12 +23,12 @@ street line and the city line. The model had correctly reassembled a real addres
 from fragments and my contiguous-substring check scored that as fabrication. Of
 55 flagged predictions, 49 were reassembly and 6 were real. No aggregate would
 have surfaced this. The F1 said "tv_address is bad" and the grounding check said
-"27 inventions", and both were true enough to be misleading.
+the model was inventing values, and both were true enough to be misleading.
 
 **All three prompt revisions improved the score through a mechanism other than
-the one I designed them for.** Every time. Arm 1 aimed at abstention and
-accidentally improved completeness. Arm 2 aimed at completeness, hit it, and
-converted its fixed cases into a new failure category. Arm 3 aimed at
+the one I designed them for.** Every time. `v2_abstain` aimed at abstention and
+accidentally improved completeness. `v3_complete` aimed at completeness, hit it,
+and converted its fixed cases into a new failure category. `v4_whose` aimed at
 disambiguation, didn't achieve it at all, and delivered the biggest formatting fix
 of the three. An F1 delta tells you whether something changed and never why. All
 three would have gone down as confirmed hypotheses if I had stopped at the score,
@@ -40,9 +40,9 @@ copying behaviour, so two effects moved at once and partly cancelled each other:
 six cases gained, three lost, on the same field. A prompt is a single artifact but
 not a single variable.
 
-**I predicted the wrong ordering of what prompting buys.** After arm 2 I
+**I predicted the wrong ordering of what prompting buys.** After `v3_complete` I
 concluded that instructions about output shape land well and instructions about
-decisions don't. Arm 3 was neither and beat both. The revised ordering, on this
+decisions don't. `v4_whose` was neither and beat both. The revised ordering, on this
 task:
 
 ```

@@ -1,6 +1,7 @@
 # ADR 0002. How this system decides what not to answer
 
 **Status:** accepted, with a known gap (see Consequences)
+
 **Supersedes nothing. Depends on** [ADR 0001](0001-what-correct-means.md).
 
 ## Context
@@ -103,7 +104,7 @@ narrow to carry a review policy by itself.
 ### Not available
 
 Token logprobs are not exposed on Ollama's native `/api/chat` path, which is the
-path required to disable thinking mode (ADR 0001 context, finding 15). So the
+path required to disable thinking mode (finding 15, and [infrastructure problems](../infrastructure-problems.md)). So the
 cheapest and best-calibrated signal in the literature is off the table as a
 direct consequence of an unrelated infrastructure decision. Worth stating
 plainly: **the endpoint choice foreclosed the confidence approach.**
@@ -139,7 +140,7 @@ That is why every uncertainty-shaped mechanism underperformed. You cannot measur
 uncertainty that is not there. The errors are systematic: the wrong value selected
 consistently, for a consistent reason, on consistent document layouts. 50 of
 `tv_address`'s 63 remaining failures are one category, wrong-company selection,
-and three prompt arms moved it by +3, -0 and +3.
+and the prompt arm written to fix it moved that count from 47 to 50 (finding 44).
 
 **Systematic errors need a corrective instrument, not an estimator.** The
 mechanism that would fix them is span localisation, telling the model *where* to
@@ -165,8 +166,8 @@ calibrated score.
 **Known gap, disclosed.** The risk-coverage curve was fitted on the same 141 test
 documents it was evaluated on. The split's 100-document valid set has never been
 run. **The curve must not be reported as a result** until it is refitted there.
-This ADR records the decision and the mechanism; the specific coverage thresholds
-in point 2 are illustrative, not validated.
+This ADR records the decision and the mechanism; the per-field lists in point 2
+are illustrative, not validated.
 
 **Follow-up experiments, in priority order.**
 

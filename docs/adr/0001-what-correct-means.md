@@ -1,7 +1,8 @@
 # ADR 0001. What "correct" means
 
 **Status:** accepted
-**Source:** `data/meta.json` and `vendor/vrdu/match_utils.py`, read directly.
+
+**Source:** `data/vrdu/main/meta.json` and `vendor/vrdu/match_utils.py`, read directly.
 
 ## Context
 
@@ -60,22 +61,48 @@ slightly optimistic.** Specifically:
 - `NumericalStringMatch` strips everything non-numeric from `contract_num`, so a
   different identifier whose digits coincide would score as a match.
 
-This belongs in the README's "what this number does not cover" section.
+The README lists this under [What this number does not cover](../../README.md#what-this-number-does-not-cover), and [the full results](../results.md#what-this-number-does-not-cover) cover all three matchers.
 
-## TODO, my own judgement calls, to fill in after the first runs
+## My own judgement calls, revisited after the runs
 
-- [ ] `tv_address` is the **remit** address, not the station's physical address.
+I wrote these down before the first runs. The answers underneath came later.
+
+- [x] `tv_address` is the **remit** address, not the station's physical address.
       Confirm against several documents and note how often that distinction bites.
-- [ ] `gross_amount`, on document 1 the candidates are $5,625.00 (Gross Total),
+
+  Not only the remit address. Gold is the station's address, or the address
+  payment is remitted to on its behalf, usually near the call sign or after
+  "REMIT TO" (FINDINGS.md, step 6 arm 3, and `prompts/v4_whose.txt`). I did not
+  count how often the station-versus-remit choice alone causes a miss.
+
+- [x] `gross_amount`, on document 1 the candidates are $5,625.00 (Gross Total),
       $843.75 (Agency Commission), $4,781.25 (Net Amount Due). Record which one
       gold selects and whether the field name alone is enough to disambiguate.
+
+  Gold is $5,625.00, the Gross Total (`traces/run-2154.txt`). The field name was
+  enough: the first prompt says nothing about gross versus net, and
+  `gross_amount` still scored F1 0.968 (finding 22).
+
 - [ ] `agency` vs `advertiser`, how often are these confusable on real documents?
-- [ ] Absent fields: gold simply omits a field that is not present. Decide how the
+
+  Still open, I did not count it. The `agency` failure taxonomy has no category
+  for it, and 81% of `agency` failures turned out to be documents with no agency
+  at all (finding 32).
+
+- [x] Absent fields: gold simply omits a field that is not present. Decide how the
       schema represents that (null vs missing) and note that there is no gold
       label for the distinction, so it is an internal convention only.
+
+  Decided: every field is required and typed string or null, so the model
+  returns null, and nulls are left out of the predictions file the same way gold
+  leaves the field out (`SCHEMA` and the results loop in `baseline.py`).
+
 - [ ] Line items: what is the row-matching key, given 5 fields per row, partial
       rows, and a median of ~12 rows per document? This is a judgement call worth
       several points of score.
+
+  Still open. Line items were scoped out (addendum below) and are listed in
+  [Still open](../open-questions.md).
 
 ---
 

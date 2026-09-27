@@ -2,8 +2,9 @@
 
 [Back to the README](../README.md)
 
-None of these are model behaviour. All four produce a run that finishes cleanly
-and reports the wrong thing, which is the failure mode worth rehearsing.
+None of these are model behaviour, and none of them said what was wrong. Two
+would let a run finish cleanly and report the wrong thing, which is the failure
+mode worth rehearsing. The other two looked like unexplained slowness.
 
 Ollama loads models at `num_ctx 4096` regardless of what the model supports.
 `qwen3:14b` supports 40960. At 4096, 69 of 641 documents get silently truncated,
