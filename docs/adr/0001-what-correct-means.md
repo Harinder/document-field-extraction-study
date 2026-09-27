@@ -1,6 +1,5 @@
 # ADR 0001. What "correct" means
 
-**Date:** 2026-09-23
 **Status:** accepted
 **Source:** `data/meta.json` and `vendor/vrdu/match_utils.py`, read directly.
 
@@ -81,7 +80,7 @@ This belongs in the README's "what this number does not cover" section.
 
 ---
 
-## Addendum (2026-09-23), the annotation format is not uniform
+## Addendum, the annotation format is not uniform
 
 Discovered by crashing on it. `annotations` is a list of `[key, values]` pairs,
 but `key` has two different types:

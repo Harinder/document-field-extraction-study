@@ -1,6 +1,5 @@
 # ADR 0002. How this system decides what not to answer
 
-**Date:** 2026-09-26
 **Status:** accepted, with a known gap (see Consequences)
 **Supersedes nothing. Depends on** [ADR 0001](0001-what-correct-means.md).
 

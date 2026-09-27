@@ -1,4 +1,4 @@
-## 2026-09-23, first run: qwen3:14b, 6 unrepeated fields, 3 docs
+## first run: qwen3:14b, 6 unrepeated fields, 3 docs
 
 Informal count: 14/18 fields matched under Google's matchers.
 
@@ -21,7 +21,7 @@ Informal count: 14/18 fields matched under Google's matchers.
    single/mixed/unseen-template splits exist to measure.
 
 Not changing anything yet. n=3.
-## 2026-09-23, infrastructure findings (not model behaviour)
+## infrastructure findings (not model behaviour)
 
 Three problems found while debugging a hung run. None are about the model, but
 all three would have silently corrupted results.
@@ -70,7 +70,7 @@ all three would have silently corrupted results.
     about 10x wall-clock. Free locally, but it makes full sweeps slow.
     Open item.
 
-## 2026-09-23, schema expanded from 6 to 9 unrepeated fields
+## schema expanded from 6 to 9 unrepeated fields
 
 11. TEMPERATURE 0 GIVES STABLE ANSWERS. Two consecutive runs produced
     byte-identical field predictions. Output token counts differed (3607 vs
@@ -96,7 +96,7 @@ all three would have silently corrupted results.
     the wrong field. Now two instances, so worth counting as a category
     rather than treating as a one-off.
 
-## 2026-09-23, step 3 harness: infrastructure debugging
+## step 3 harness: infrastructure debugging
 
 15. THINKING MODE WAS THE FIRST BOTTLENECK. Ollama's OpenAI-compatible /v1
     endpoint silently ignores think=false, so qwen3 generated roughly 3000
@@ -144,7 +144,7 @@ all three would have silently corrupted results.
     The schema was previously asserting that any of these could be a
     paragraph, which was never true.
 
-## 2026-09-24, FIRST EXTERNALLY SCORED BASELINE
+## FIRST EXTERNALLY SCORED BASELINE
 
 Conditions: qwen3-14b-32k local, prompt v1, temperature 0, think=false,
 maxLength 120, 9 unrepeated fields only, split
@@ -182,7 +182,7 @@ Google's annotations.
     Weeks 4 to 6 should open-code these two first. Fixing tv_address alone
     is worth roughly 5 points of unrepeated F1.
 
-## 2026-09-24, step 4: grounding
+## step 4: grounding
 
 Run on cached predictions, no new inference. A value the model emits should
 appear in the source OCR text; if not, it was invented.
@@ -217,7 +217,7 @@ appear in the source OCR text; if not, it was invented.
     system, and weeks 4 to 6 should open-code for it specifically rather
     than looking for hallucination.
 
-## 2026-09-24, step 5 open coding: a measurement bug found by reading
+## step 5 open coding: a measurement bug found by reading
 
 26. MY GROUNDING CHECK HAD A FALSE-POSITIVE PROBLEM AND FINDING 23 WAS PARTLY
     WRONG. Found by reading document 300535fe by hand rather than by any
@@ -252,7 +252,7 @@ appear in the source OCR text; if not, it was invented.
     could have surfaced either. This is the argument for the protected block
     stated as concretely as I can state it.
 
-## 2026-09-24, step 5: tv_address failure taxonomy
+## step 5: tv_address failure taxonomy
 
 Hand-labelled 10 randomly sampled failures (seed 0, not cherry-picked), then
 auto-classified all 107 using the categories that came out of those 10.
@@ -302,7 +302,7 @@ auto-classified all 107 using the categories that came out of those 10.
     an explicit "whose address" instruction should recover part of the 44%;
     a stronger null rule should recover part of the 21%.
 
-## 2026-09-24, step 5: agency taxonomy, and why per-field analysis matters
+## step 5: agency taxonomy, and why per-field analysis matters
 
 Hand-labelled 10 random agency failures with no categories supplied, having
 done the exercise once on tv_address. The categories that emerged were
@@ -345,7 +345,7 @@ different, which is itself the finding.
     the model cannot tell an absent field from a present one, which is a
     harder problem than instruction-following.
 
-## 2026-09-25, step 6 arm 1: v2_abstain
+## step 6 arm 1: v2_abstain
 
 Changed exactly one file: the null instruction became an explicit paragraph.
 Everything else identical. 141 documents, 0 failures.
@@ -402,7 +402,7 @@ Everything else identical. 141 documents, 0 failures.
     run which completed 141 documents in 1905s. Not investigated. Logged so
     it is not silently forgotten.
 
-## 2026-09-25, step 6 arm 2: v3_complete
+## step 6 arm 2: v3_complete
 
 One paragraph added to BASELINE v1 (not to v2), asking for complete multi-line
 values. 141 documents, 0 failures, 1913s.
@@ -442,7 +442,7 @@ values. 141 documents, 0 failures, 1913s.
     target field would hide the cost entirely. Per-field tables are not
     decoration.
 
-## 2026-09-26, step 6 arm 3: v4_whose
+## step 6 arm 3: v4_whose
 
 One paragraph added to BASELINE v1 naming which organisation each field refers
 to. Rule derived from the data, not guessed: gold tv_address sits near the
@@ -503,7 +503,7 @@ context). 141 documents, 0 failures, 4270s.
     which supports the semantic reading: clarifying the document's cast of
     organisations helps fields that were never named.
 
-## 2026-09-26, step 7: confidence from free features (weak result)
+## step 7: confidence from free features (weak result)
 
 Built on the v4_whose predictions, no new inference. 1230 non-null predictions,
 67.7% correct overall.
@@ -558,7 +558,7 @@ Built on the v4_whose predictions, no new inference. 1230 non-null predictions,
     worth testing next: on a 40-document subset at 3 samples it is about 25
     minutes and directly tests whether disagreement predicts error.
 
-## 2026-09-26, step 7: self-consistency (real signal, narrow reach)
+## step 7: self-consistency (real signal, narrow reach)
 
 40 documents x 3 samples at temperature 0.7 with the v4_whose prompt, different
 seeds. 360 field predictions, 1067s.
@@ -605,11 +605,11 @@ seeds. 360 field predictions, 1067s.
     the schema and comparing diversity, which is a clean follow-up
     experiment and is not run here.
 
-## 2026-09-26, step 8: writing it up
+## step 8: writing it up
 
 57. WRITING THE README FOUND A VERIFICATION GAP I DID NOT KNOW I HAD. The
-    per-field baseline numbers existed only inside a log line from a run three
-    days earlier, and the baseline run's own log did not print them at all. I
+    per-field baseline numbers existed only inside a log line from an earlier
+    run, and the baseline run's own log did not print them at all. I
     had been deriving them by subtracting the deltas quoted in findings 43 and
     the arm 3 block. That works until one of those deltas is a typo, and then
     every derived number is wrong with no way to notice.
@@ -630,8 +630,7 @@ seeds. 360 field predictions, 1067s.
     /api/chat does not expose token logprobs. Logprobs are the cheapest and
     best-calibrated confidence signal in the literature. So a decision taken
     purely to cut 10x wall clock in step 3 removed the best available option in
-    step 7, three weeks of project time later, and nothing flagged it at the
-    time.
+    step 7, several steps later, and nothing flagged it at the time.
     This is the shape of infrastructure decision worth writing down: it was
     correct on its own terms, it had no visible cost when made, and its real
     cost was paid by a part of the system that did not exist yet.
@@ -656,5 +655,5 @@ seeds. 360 field predictions, 1067s.
     The score moved for the wrong reason three times out of three, and the
     per-field table caught none of them.
     Read one document by hand before trusting any detector I wrote. My
-    grounding check was wrong for two days and only reading document 300535fe
-    exposed it.
+    grounding check was wrong for several rounds and only reading document
+    300535fe exposed it.
